@@ -22,7 +22,7 @@ public class TaskHandler {
 
 			ans = Validator.getInt(scan, printOptions() + "Choice: ", 1, 8);
 			System.out.println();
-			
+
 			int choice = 0;
 
 			switch (ans) {
@@ -31,7 +31,7 @@ public class TaskHandler {
 				if (tasks.size() > 0) {
 					listTasks(tasks);
 				} else {
-					System.out.println("\nNo tasks available to be listed.");
+					System.out.println("No tasks available to be listed.");
 				}
 				break;
 			case 2:
@@ -46,7 +46,7 @@ public class TaskHandler {
 						tasks.remove(choice - 1);
 					}
 				} else {
-					System.out.println("\nNo tasks available to be deleted.");
+					System.out.println("No tasks available to be deleted.");
 				}
 				System.out.println();
 				break;
@@ -60,7 +60,7 @@ public class TaskHandler {
 						tasks.get(choice - 1).setCompletion(true);
 					}
 				} else {
-					System.out.println("\nNo tasks available to be marked complete.");
+					System.out.println("No tasks available to be marked complete.");
 				}
 				System.out.println();
 				break;
@@ -68,17 +68,17 @@ public class TaskHandler {
 				choice = 0;
 				if (tasks.size() > 0) {
 					listTasks(tasks);
-					choice = Validator.getInt(scan, "\nWhich task is to be modified? (enter 0 for none) ", 1,
+					choice = Validator.getInt(scan, "Which task is to be modified? (enter 0 for none) ", 1,
 							tasks.size());
 					if (choice > 0) {
 						modifyTask(tasks.get(choice - 1));
 					}
 				} else {
-					System.out.println("\nNo tasks available to be modified.");
+					System.out.println("No tasks available to be modified.");
 				}
 				break;
 			case 6:
-				System.out.println("\nWhose tasks are to be listed? (enter 0 for none)");
+				System.out.println("Whose tasks are to be listed? (enter 0 for none)");
 				for (int i = 0; i < getNames(tasks).size(); i++) {
 					System.out.println((i + 1) + ". " + getNames(tasks).get(i));
 				}
@@ -94,26 +94,7 @@ public class TaskHandler {
 				}
 				break;
 			case 7:
-				String dateFilter = Validator.getStringMatchingRegex(scan, "\nEnter due date (mm/dd/yyyy): ",
-						"[0-1][0-9][/][0-3][0-9][/][0-9]{4}");
-				System.out.println();
-				String[] dateArrString = dateFilter.split("/");
-				int[] dateArr = {Integer.parseInt(dateArrString[0]), Integer.parseInt(dateArrString[1]), Integer.parseInt(dateArrString[2])};
-				for (Task task : tasks) {
-					String[] taskDateArrString = task.getDueDate().split("/");
-					int[] taskDateArr = {Integer.parseInt(taskDateArrString[0]), Integer.parseInt(taskDateArrString[1]), Integer.parseInt(taskDateArrString[2])};
-					if (taskDateArr[2] > dateArr[2]) {
-						System.out.println("Task " + (tasks.indexOf(task) + 1) + ".\n" + task.toString() + "\n");
-					} else if (taskDateArr[2] == dateArr[2]) {
-						if (taskDateArr[1] > dateArr[1]) {
-							System.out.println("Task " + (tasks.indexOf(task) + 1) + ".\n" + task.toString() + "\n");
-						} else if (taskDateArr[1] == dateArr[1]) {
-							if (taskDateArr[0] >= dateArr[0]) {
-								System.out.println("Task " + (tasks.indexOf(task) + 1) + ".\n" + task.toString() + "\n");
-							}
-						}
-					}
-				}
+				checkBeforeDate(tasks, scan);
 				break;
 			case 8:
 				System.out.println("\nGoodbye.");
@@ -127,6 +108,31 @@ public class TaskHandler {
 
 		scan.close();
 
+	}
+
+	private static void checkBeforeDate(List<Task> tasks, Scanner scan) {
+		String dateFilter = Validator.getStringMatchingRegex(scan, "Enter due date (mm/dd/yyyy): ",
+				"[0-1][0-9][/][0-3][0-9][/][0-9]{4}");
+		System.out.println();
+		String[] dateArrString = dateFilter.split("/");
+		int[] dateArr = { Integer.parseInt(dateArrString[0]), Integer.parseInt(dateArrString[1]),
+				Integer.parseInt(dateArrString[2]) };
+		for (Task task : tasks) {
+			String[] taskDateArrString = task.getDueDate().split("/");
+			int[] taskDateArr = { Integer.parseInt(taskDateArrString[0]),
+					Integer.parseInt(taskDateArrString[1]), Integer.parseInt(taskDateArrString[2]) };
+			if (taskDateArr[2] < dateArr[2]) {
+				System.out.println("Task " + (tasks.indexOf(task) + 1) + ".\n" + task.toString() + "\n");
+			} else if (taskDateArr[2] == dateArr[2]) {
+				if (taskDateArr[0] < dateArr[0]) {
+					System.out.println("Task " + (tasks.indexOf(task) + 1) + ".\n" + task.toString() + "\n");
+				} else if (taskDateArr[0] == dateArr[0]) {
+					if (taskDateArr[1] <= dateArr[1]) {
+						System.out.println("Task " + (tasks.indexOf(task) + 1) + ".\n" + task.toString() + "\n");
+					}
+				}
+			}
+		}
 	}
 
 	public static String printOptions() {

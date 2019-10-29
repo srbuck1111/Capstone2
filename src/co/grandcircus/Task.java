@@ -79,4 +79,5 @@ public class Task {
 		}
 		return String.format("%-20s %-12s %-12s %-100s \n%-20s %-12s %-12s %-100s" , "Team Member Name:" , "Due Date:", "Status:", "Description:" , name, dueDate, completed, desc);
 	}
+	
 }
